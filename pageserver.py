@@ -86,12 +86,11 @@ def respond(sock):
         try:
             #open html file, if file can't be found throw exception
             #file won't open always throughs exception
-            file = open('pages' + PagePath)
-            for line in source:
-                transmit(line, sock)
+            html = open('./pages' + PagePath)
             transmit(STATUS_OK, sock)
+            for line in html:
+                transmit(line, sock)
             
-            return
         except Exception:
             transmit(STATUS_NOT_FOUND, sock)
         
