@@ -85,9 +85,12 @@ def respond(sock):
         
         try:
             html = open("./pages" + PagePath)
+            print("a")
             transmit(STATUS_OK, sock)
+            print("b")
             for line in html:
                 transmit(html, sock)
+            print("c")
         except Exception:
             transmit(STATUS_NOT_FOUND, sock)
         
