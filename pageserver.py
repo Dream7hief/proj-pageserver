@@ -85,7 +85,7 @@ def respond(sock):
         
         try:
             #open html file, if file can't be found throw exception
-            file = open("./pages/" + PagePath, "r")
+            file = open('./pages/' + PagePath, 'r')
             transmit(STATUS_OK, sock)
             transmit(file, sock)
             
