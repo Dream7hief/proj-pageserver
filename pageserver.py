@@ -84,13 +84,10 @@ def respond(sock):
     if len(parts) > 1 and parts[0] == "GET":
         
         try:
-            html = open("./pages" + PagePath)
-            print("a")
+            html = open("pages" + PagePath)
             transmit(STATUS_OK, sock)
-            print("b")
-            for line in html:
-                transmit(html, sock)
-            print("c")
+            transmit(html, sock)
+         
         except Exception:
             transmit(STATUS_NOT_FOUND, sock)
         
