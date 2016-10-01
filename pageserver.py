@@ -75,7 +75,6 @@ def respond(sock):
 
     parts = request.split()
     PagePath = parts[1]
-    check_path()
     if "//"  in PagePath or "~" in PagePath or ".." in PagePath:
         transmit(STATUS_FORBIDDEN, sock)
         
