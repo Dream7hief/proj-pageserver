@@ -84,9 +84,10 @@ def respond(sock):
             transmit(STATUS_FORBIDDEN, sock)   
         
     if len(parts) > 1 and parts[0] == "GET":
-        
+        check_path()
+        break
         try:
-            check_path()
+            
             #open html file, if file can't be found throw exception
             #file won't open always throughs exception
             html = open('pages' + PagePath)
