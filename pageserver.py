@@ -75,18 +75,21 @@ def respond(sock):
 
     parts = request.split()
     PagePath = parts[1]
-    if "//"  in PagePath or "~" in PagePath or ".." in PagePath:
-        transmit(STATUS_FORBIDDEN, sock)
+    
+    def check_path():
+        if "//"  in PagePath or "~" in PagePath or ".." in PagePath:
+            transmit(STATUS_FORBIDDEN, sock)
         
-    if not (PagePath.endswith("html") or PagePath.endswith("css")):
-        transmit(STATUS_FORBIDDEN, sock)   
+        if not (PagePath.endswith("html") or PagePath.endswith("css")):
+            transmit(STATUS_FORBIDDEN, sock)   
         
     if len(parts) > 1 and parts[0] == "GET":
         
         try:
+            check_path()
             #open html file, if file can't be found throw exception
             #file won't open always throughs exception
-            html = open('./pages' + PagePath)
+            html = open('pages' + PagePath)
             transmit(STATUS_OK, sock)
             for line in html:
                 transmit(line, sock)
