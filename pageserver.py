@@ -84,10 +84,11 @@ def respond(sock):
     if len(parts) > 1 and parts[0] == "GET":
         
         try:
-            with open('./pages'.format(PagePath)) as f:
-                html = f.read()
-                transmit(STATUS_OK, sock)
-                transmit(html, sock)
+            #open html file, if file can't be found throw exception
+            file = open("./pages/", "r")
+            transmit(STATUS_OK, sock)
+            transmit(file, sock)
+            
         except Exception:
             transmit("503 Server Error", sock)
         
