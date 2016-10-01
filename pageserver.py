@@ -84,7 +84,7 @@ def respond(sock):
     if len(parts) > 1 and parts[0] == "GET":
         
         try:
-            html = open("pages" + PagePath)
+            html = open("./pages/" + PagePath)
             transmit(STATUS_OK, sock)
             transmit(html, sock)
         except Exception:
