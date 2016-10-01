@@ -52,14 +52,6 @@ def serve(sock, func):
         _thread.start_new_thread(func, (clientsocket,))
 
 
-##
-## Starter version only serves cat pictures. In fact, only a
-## particular cat picture.  This one.
-##
-CAT = """
-     ^ ^
-   =(   )=
-"""
 
 ## HTTP response codes, as the strings we will actually send. 
 ##   See:  https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
@@ -70,24 +62,39 @@ STATUS_FORBIDDEN = "HTTP/1.0 403 Forbidden\n\n"
 STATUS_NOT_FOUND = "HTTP/1.0 404 Not Found\n\n"
 STATUS_NOT_IMPLEMENTED = "HTTP/1.0 401 Not Implemented\n\n"
 
+
 def respond(sock):
     """
     This server responds only to GET requests (not PUT, POST, or UPDATE).
     Any valid GET request is answered with an ascii graphic of a cat. 
     """
-    sent = 0
+    
     request = sock.recv(1024)  # We accept only short requests
     request = str(request, encoding='utf-8', errors='strict')
     print("\nRequest was {}\n".format(request))
 
     parts = request.split()
+    PagePath = parts[1]
+    check_path()
+    if "//"  in PagePath or "~" in PagePath or ".." in PagePath:
+        transmit(STATUS_FORBIDDEN, sock)
+        
+    if not (PagePath.endswith("html") or PagePath.endswith("css")):
+        transmit(STATUS_FORBIDDEN, sock)   
+        
     if len(parts) > 1 and parts[0] == "GET":
-        transmit(STATUS_OK, sock)
-        transmit(CAT, sock)
+        
+        try:
+            html = open("pages" + PagePath)
+            transmit(STATUS_OK, sock)
+            transmit(html, sock)
+        except Exception:
+            transmit(STATUS_NOT_FOUND, sock)
+        
     else:
         transmit(STATUS_NOT_IMPLEMENTED, sock)        
         transmit("\nI don't handle this request: {}\n".format(request), sock)
-
+    
     sock.close()
     return
 
@@ -120,6 +127,9 @@ def get_options():
     return options
     
 
+        
+    
+    
 def main():
     options = get_options()
     port = options.port
