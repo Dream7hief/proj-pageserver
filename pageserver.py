@@ -84,8 +84,9 @@ def respond(sock):
     if len(parts) > 1 and parts[0] == "GET":
         
         try:
-            with open('./pages/{}'.format(PagePath))as f:
+            with open('./pages/{}'.format(PagePath)) as f:
                 html = f.read()
+                transmit(STATUS_OK, sock)
                 transmit(html, sock)
         except Exception:
             transmit(STATUS_NOT_FOUND, sock)
