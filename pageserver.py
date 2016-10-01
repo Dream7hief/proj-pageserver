@@ -85,8 +85,8 @@ def respond(sock):
         
         try:
             with open('./pages/{}'.format(PagePath))as f:
-            html = f.read()
-            transmit(html, sock)
+                html = f.read()
+                transmit(html, sock)
         except Exception:
             transmit(STATUS_NOT_FOUND, sock)
         
