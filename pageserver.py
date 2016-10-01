@@ -8,7 +8,7 @@
 
   FIXME:
   Currently this program always serves an ascii graphic of a cat.
-  Change it to serve files if they end with .html or .css, and are
+  Change it to serve files if they end with  or .css, and are
   located in ./pages  (where '.' is the directory from which this
   program is run).  
 """
@@ -85,12 +85,15 @@ def respond(sock):
         
         try:
             #open html file, if file can't be found throw exception
-            file = open('./pages/' + PagePath, 'r')
+            #file won't open always throughs exception
+            file = open('pages' + PagePath)
+            for line in source:
+                transmit(line, sock)
             transmit(STATUS_OK, sock)
-            transmit(file, sock)
             
+            return
         except Exception:
-            transmit("503 Server Error", sock)
+            transmit(STATUS_NOT_FOUND, sock)
         
     else:
         transmit(STATUS_NOT_IMPLEMENTED, sock)        
@@ -140,4 +143,3 @@ def main():
     serve(sock, respond)
 
 main()
-    
