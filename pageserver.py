@@ -53,6 +53,27 @@ def serve(sock, func):
 
 
 
+
+def check_path(pagepath):
+    if "//"  in pagepath or "~" in pagepath or ".." in pagepath:
+
+        return 1
+    
+    elif pagepath == "/":
+        
+        return 2
+    
+    if not (pagepath.endswith("html") or pagepath.endswith("css")):
+
+       return 3
+    
+    else:
+        
+       return 3
+CAT = """
+     ^ ^
+   =(   )=
+"""
 ## HTTP response codes, as the strings we will actually send. 
 ##   See:  https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 ##   or    http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
@@ -62,8 +83,10 @@ STATUS_FORBIDDEN = "HTTP/1.0 403 Forbidden\n\n"
 STATUS_NOT_FOUND = "HTTP/1.0 404 Not Found\n\n"
 STATUS_NOT_IMPLEMENTED = "HTTP/1.0 401 Not Implemented\n\n"
 
-
 def respond(sock):
+    
+    
+    
     """
     This server responds only to GET requests (not PUT, POST, or UPDATE).
     Any valid GET request is answered with an ascii graphic of a cat. 
@@ -76,29 +99,36 @@ def respond(sock):
     parts = request.split()
     PagePath = parts[1]
     
-    def check_path():
-        if "//"  in PagePath or "~" in PagePath or ".." in PagePath:
-            transmit(STATUS_FORBIDDEN, sock)
-        
-        if not (PagePath.endswith("html") or PagePath.endswith("css")):
-            transmit(STATUS_FORBIDDEN, sock)   
+    
         
     if len(parts) > 1 and parts[0] == "GET":
-        check_path()
-        break
-        try:
+        if check_path(PagePath)== 3:
+            try:
             
-            #open html file, if file can't be found throw exception
-            #file won't open always throughs exception
-            html = open('pages' + PagePath)
+                #open html file, if file can't be found throw exception
+                #file won't open always throughs exception
+                html = open('pages' + PagePath)
+                transmit(STATUS_OK, sock)
+                for line in html:
+                    transmit(line, sock)
+            
+            except Exception:
+                transmit(STATUS_OK, sock)
+                transmit(STATUS_NOT_FOUND, sock)
+                transmit("Page not found", sock)
+    
+        
+        elif check_path(PagePath)==2:
             transmit(STATUS_OK, sock)
-            for line in html:
-                transmit(line, sock)
+            transmit(CAT, sock)
             
-        except Exception:
-            transmit(STATUS_NOT_FOUND, sock)
+        elif check_path(PagePath)==1 or check_path(PagePath)==3:
+            transmit(STATUS_OK, sock)
+            transmit(STATUS_FORBIDDEN, sock)
+        
         
     else:
+        transmit(STATUS_OK, sock)
         transmit(STATUS_NOT_IMPLEMENTED, sock)        
         transmit("\nI don't handle this request: {}\n".format(request), sock)
     
